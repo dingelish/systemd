@@ -1445,8 +1445,10 @@ if want_p11kit != 'false' and not skip_deps
                                version : '>= 0.23.3',
                                required : want_p11kit == 'true')
         have = libp11kit.found()
+        libp11kit_cflags = libp11kit.partial_dependency(includes: true, compile_args: true)
 else
         have = false
+        libp11kit_cflags = []
         libp11kit = []
 endif
 conf.set10('HAVE_P11KIT', have)
@@ -3340,6 +3342,15 @@ executable('systemd-growfs',
 executable(
         'systemd-makefs',
         'src/partition/makefs.c',
+        include_directories : includes,
+        link_with : [libshared],
+        install_rpath : rootpkglibdir,
+        install : true,
+        install_dir : rootlibexecdir)
+
+executable(
+        'systemd-fsckd',
+        'src/fsckd/fsckd.c',
         include_directories : includes,
         link_with : [libshared],
         install_rpath : rootpkglibdir,
